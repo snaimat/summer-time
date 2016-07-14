@@ -1,0 +1,27 @@
+
+apply plugin: 'application'
+
+mainClassName = 'Application'
+
+dependencies {
+	compile 'org.antlr:ST4:4.0.8'
+    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.2'
+    compile 'org.apache.commons:commons-lang3:3.4'
+	compile 'io.swagger:swagger-codegen-cli:2.1.2'
+}
+
+task buildApp(type: JavaExec, dependsOn: 'copyProjectFiles') {
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'com.elsevier.eols.template.Application' 
+	args rootProject.appName, rootProject.appPackage, 'build/' + rootProject.appName
+}
+
+task copyAppFiles(type: Copy) {
+	from 'src/main/resources/appFiles'
+	into 'build/' + rootProject.appName + '/src/main/resources'
+}
+
+task copyProjectFiles(type: Copy, dependsOn: 'copyAppFiles') {
+	from 'src/main/resources/projectFiles'
+	into 'build/' + rootProject.appName
+}
