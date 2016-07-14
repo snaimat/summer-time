@@ -1,0 +1,30 @@
+defaultTasks 'clean', 'buildApp', 'dist'
+
+def topPackage = System.getProperty("topPackage") ?: "missingTopPackage"
+ext.appPackage = topPackage;
+def aName = System.getProperty("appName") ?: "missingAppName"
+ext.appName = aName
+
+task buildApp << { println "Building Template Application for " + appName }
+subprojects {
+
+	repositories {
+	    maven {
+	        url 'http://elsols.artifactoryonline.com/elsols/repo'
+	        credentials {
+	            username = "${artifactory_user}"
+	            password = "${artifactory_password}"
+	        }
+	    }
+	    mavenCentral()
+	    jcenter()
+	    mavenLocal()
+	}
+
+}
+
+task dist(type: Zip) {
+	archiveName appName + '.zip'
+	from 'app-template/build/' + appName
+	into appName 
+}
